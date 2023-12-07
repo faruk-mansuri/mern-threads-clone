@@ -62,7 +62,8 @@ const Conversation = ({ conversation, isOnline }) => {
 
       <Stack direction={'column'} fontSize='sm'>
         <Text fontWeight='700' display='flex' alignItems='center'>
-          {user.username} <Image src={verifiedLogo} w={4} h={4} ml={1} />
+          {user?.username.substring(0, 10)}
+          <Image src={verifiedLogo} w={4} h={4} ml={1} />
         </Text>
         <Box fontSize='sm' display={'flex'} alignItems='center' gap={1}>
           {currentUser?._id === lastMessage.sender ? (

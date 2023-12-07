@@ -128,6 +128,8 @@ const Chat = () => {
         mx={'auto'} //middle
       >
         <Flex
+          maxHeight={{ sm: '72', md: '96' }}
+          overflow={'scroll'}
           flex={3}
           gap={2}
           flexDirection={'column'}

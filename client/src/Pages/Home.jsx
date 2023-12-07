@@ -19,20 +19,16 @@ export const loader = async () => {
 const Home = () => {
   const posts = useSelector((store) => store.post.posts);
 
-  if (posts.length === 0) {
-    return (
-      <Box>
-        <Heading>Follow some users to see feed</Heading>
-      </Box>
-    );
-  }
-
   return (
     <Flex gap={10} alignItems={'flex-start'}>
       <Box flex={7}>
-        {posts.map((post) => {
-          return <Post key={post._id} post={post} />;
-        })}
+        {posts.length === 0 ? (
+          <Heading>Follow some users to see feed</Heading>
+        ) : (
+          posts.map((post) => {
+            return <Post key={post._id} post={post} />;
+          })
+        )}
       </Box>
 
       <Box flex={3} display={{ base: 'none', md: 'block' }}>
