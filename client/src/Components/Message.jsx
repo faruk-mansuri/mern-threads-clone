@@ -14,7 +14,9 @@ const Message = ({ message, ownMessage }) => {
         <Flex gap={2} alignSelf={'flex-end'}>
           {message.text && (
             <Flex bg={'green.800'} maxW={'350px'} p={1} borderRadius={'md'}>
-              <Text color={'white'}>{message.text}</Text>
+              <Text wordBreak={'break-word'} color={'white'}>
+                {message.text}
+              </Text>
               <Box
                 alignSelf={'flex-end'}
                 ml={1}
@@ -62,6 +64,7 @@ const Message = ({ message, ownMessage }) => {
           <Avatar src={selectedConversation.userProfilePic} w={7} h={7} />
           {message.text && (
             <Text
+              wordBreak={'break-word'}
               maxWidth='330px'
               bg='gray.400'
               color='#222'
