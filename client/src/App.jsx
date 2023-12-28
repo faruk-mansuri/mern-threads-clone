@@ -62,13 +62,13 @@ const router = createBrowserRouter([
   {
     path: 'login',
     element: <Login />,
-    // loader: registerLoader,
+    loader: registerLoader,
     action: loginAction,
   },
   {
     path: 'register',
     element: <Register />,
-    // loader: loginLoader,
+    loader: loginLoader,
     action: registerAction,
   },
 ]);

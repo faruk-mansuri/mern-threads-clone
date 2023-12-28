@@ -60,8 +60,6 @@ export const updateUser = async (req, res) => {
 
   user = await user.save();
 
-  console.log(user);
-
   // password should be null in response
   user.password = null;
 
@@ -146,4 +144,16 @@ export const freezeAccount = async (req, res) => {
   user.isFrozen = true;
   await user.save();
   res.status(StatusCodes.OK).json({ msg: 'your account is frozen' });
+};
+
+export const getFollowers = async (req, res) => {
+  const user = await User.findById(req.params.id);
+  const followers = await User.find({ _id: { $in: user.followers } });
+  res.status(StatusCodes.OK).json({ followers });
+};
+
+export const getFollowings = async (req, res) => {
+  const user = await User.findById(req.params.id);
+  const followings = await User.find({ _id: { $in: user.following } });
+  res.status(StatusCodes.OK).json({ followings });
 };

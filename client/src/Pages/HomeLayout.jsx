@@ -6,6 +6,7 @@ import { store } from '../store';
 import { setUser } from '../features/user/userSlice';
 import { Container } from '@chakra-ui/react';
 import { useLocation } from 'react-router-dom';
+import { removeUser } from '../features/user/userSlice';
 
 export const loader = async () => {
   try {
@@ -15,7 +16,9 @@ export const loader = async () => {
   } catch (error) {
     const errorMessage = error?.response?.data?.msg || 'Something went wrong';
     // toast.error(errorMessage);
-    console.log('error', error);
+    // console.log('error', error);
+    await customFetch('/auth/logout');
+    store.dispatch(removeUser());
     return redirect('/login');
   }
 };

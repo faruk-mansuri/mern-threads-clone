@@ -10,6 +10,7 @@ import {
   MenuItem,
   Menu,
   Button,
+  HStack,
 } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
 import { BsInstagram } from 'react-icons/bs';
@@ -17,7 +18,10 @@ import { CgMoreO } from 'react-icons/cg';
 import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
 import useFollowUnFollow from '../hooks/useFollowUnFollow';
+import Followers from './Followers';
+import Followings from './Followings';
 
+// import
 const UserHeader = ({ user }) => {
   const { user: currentUser } = useSelector((store) => store.user); // logged in user
 
@@ -70,9 +74,13 @@ const UserHeader = ({ user }) => {
       <Text> {user.bio}</Text>
 
       {currentUser?._id === user._id && (
-        <Link to='/update'>
-          <Button size='sm'>update profile</Button>
-        </Link>
+        <HStack gap={4}>
+          <Followers />
+          <Followings />
+          <Link to='/update'>
+            <Button size='sm'>update profile</Button>
+          </Link>
+        </HStack>
       )}
 
       {currentUser?._id !== user._id && (
