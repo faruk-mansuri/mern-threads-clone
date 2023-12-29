@@ -1,8 +1,10 @@
 import { Avatar, Box, Button, Flex, Text } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
 import useFollowUnFollow from '../hooks/useFollowUnFollow';
+import { useSelector } from 'react-redux';
 
 const SingleFollowerAndFollowings = ({ user }) => {
+  const { _id: currentUserId } = useSelector((store) => store.user.user);
   const { handleFollowAndUnFollow, following, updating } =
     useFollowUnFollow(user);
 
@@ -26,19 +28,21 @@ const SingleFollowerAndFollowings = ({ user }) => {
         </Box>
       </Flex>
       {/* right side */}
-      <Button
-        size={'sm'}
-        color={following ? 'black' : 'white'}
-        bg={following ? 'white' : 'blue.400'}
-        onClick={handleFollowAndUnFollow}
-        isLoading={updating}
-        _hover={{
-          color: following ? 'black' : 'white',
-          opacity: '.8',
-        }}
-      >
-        {following ? 'Unfollow' : 'Follow'}
-      </Button>
+      {currentUserId !== user._id && (
+        <Button
+          size={'sm'}
+          color={following ? 'black' : 'white'}
+          bg={following ? 'white' : 'blue.400'}
+          onClick={handleFollowAndUnFollow}
+          isLoading={updating}
+          _hover={{
+            color: following ? 'black' : 'white',
+            opacity: '.8',
+          }}
+        >
+          {following ? 'Unfollow' : 'Follow'}
+        </Button>
+      )}
     </Flex>
   );
 };
