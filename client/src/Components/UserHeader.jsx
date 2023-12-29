@@ -18,8 +18,8 @@ import { CgMoreO } from 'react-icons/cg';
 import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
 import useFollowUnFollow from '../hooks/useFollowUnFollow';
-import Followers from './Followers';
-import Followings from './Followings';
+import FollowersContainer from './FollowersContainer';
+import FollowingsContainer from './FollowingsContainer';
 
 // import
 const UserHeader = ({ user }) => {
@@ -73,25 +73,26 @@ const UserHeader = ({ user }) => {
 
       <Text> {user.bio}</Text>
 
-      {currentUser?._id === user._id && (
-        <HStack gap={4}>
-          <Followers />
-          <Followings />
-          <Link to='/update'>
-            <Button size='sm'>update profile</Button>
-          </Link>
+      <HStack justify={'space-between'}>
+        <HStack>
+          <FollowersContainer user={user} />
+          <FollowingsContainer user={user} />
         </HStack>
-      )}
 
-      {currentUser?._id !== user._id && (
-        <Button
-          size='sm'
-          onClick={handleFollowAndUnFollow}
-          isLoading={updating}
-        >
-          {following ? 'Unfollow' : 'Follow'}
-        </Button>
-      )}
+        {currentUser?._id === user._id ? (
+          <Link to='/update'>
+            <Button size='md'>update profile</Button>
+          </Link>
+        ) : (
+          <Button
+            size='md'
+            onClick={handleFollowAndUnFollow}
+            isLoading={updating}
+          >
+            {following ? 'Unfollow' : 'Follow'}
+          </Button>
+        )}
+      </HStack>
 
       <Flex w={'full'} justifyContent={'space-between'}>
         <Flex gap={2} alignItems={'center'}>

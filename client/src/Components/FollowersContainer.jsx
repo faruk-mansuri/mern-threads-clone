@@ -12,18 +12,15 @@ import {
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import customFetch from '../utils/customFetch';
-import SingleSuggestedUser from './SingleSuggestedUser';
-import { useSelector } from 'react-redux';
+import SingleFollowerAndFollowings from './SingleFollowerAndFollowings';
 
-const Followers = () => {
-  const { _id } = useSelector((store) => store.user.user);
+const FollowersContainer = ({ user }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [followers, setFollowers] = useState([]);
 
   useEffect(() => {
     const fetchFollowers = async () => {
-      const response = await customFetch(`/users/get-followers/${_id}`);
-      const followings = await customFetch(`/users/get-followings/${_id}`);
+      const response = await customFetch(`/users/get-followers/${user._id}`);
       setFollowers(response.data.followers);
     };
     fetchFollowers();
@@ -31,7 +28,7 @@ const Followers = () => {
 
   return (
     <>
-      <Button onClick={onOpen}>Followers</Button>
+      <Button onClick={onOpen}>{followers.length} followers</Button>
 
       <Modal size={'sm'} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
@@ -45,11 +42,10 @@ const Followers = () => {
               flex={3}
               gap={2}
               flexDirection={'column'}
-              maxW={{ sm: '250px', md: 'full' }}
               mx={'auto'}
             >
               {followers.map((follower) => {
-                return <SingleSuggestedUser user={follower} />;
+                return <SingleFollowerAndFollowings user={follower} />;
               })}
             </Flex>
           </ModalBody>
@@ -59,4 +55,4 @@ const Followers = () => {
   );
 };
 
-export default Followers;
+export default FollowersContainer;

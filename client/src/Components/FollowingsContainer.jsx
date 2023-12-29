@@ -15,18 +15,15 @@ import {
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import customFetch from '../utils/customFetch';
-import SingleSuggestedUser from './SingleSuggestedUser';
-import { useSelector } from 'react-redux';
+import SingleFollowerAndFollowings from './SingleFollowerAndFollowings';
 
-const Followings = () => {
-  const { _id } = useSelector((store) => store.user.user);
-
+const FollowingsContainer = ({ user }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [followings, setFollowings] = useState([]);
 
   useEffect(() => {
     const fetchFollowings = async () => {
-      const response = await customFetch(`/users/get-followings/${_id}`);
+      const response = await customFetch(`/users/get-followings/${user._id}`);
       setFollowings(response.data.followings);
     };
     fetchFollowings();
@@ -34,7 +31,7 @@ const Followings = () => {
 
   return (
     <>
-      <Button onClick={onOpen}>Followings</Button>
+      <Button onClick={onOpen}>{followings.length} followings</Button>
 
       <Modal size={'sm'} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
@@ -48,7 +45,6 @@ const Followings = () => {
               flex={3}
               gap={2}
               flexDirection={'column'}
-              maxW={{ sm: '250px', md: 'full' }}
               mx={'auto'}
             >
               <Box>
@@ -57,11 +53,10 @@ const Followings = () => {
                     Not following
                   </Heading>
                 )}
-                <VStack>
-                  {followings.map((following) => {
-                    return <SingleSuggestedUser user={following} />;
-                  })}
-                </VStack>
+
+                {followings.map((following) => {
+                  return <SingleFollowerAndFollowings user={following} />;
+                })}
               </Box>
             </Flex>
           </ModalBody>
@@ -71,4 +66,4 @@ const Followings = () => {
   );
 };
 
-export default Followings;
+export default FollowingsContainer;
