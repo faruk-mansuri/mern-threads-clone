@@ -182,17 +182,21 @@ const Chat = () => {
             })
           ) : (
             <>
-              {conversations.map((conversation) => {
-                return (
-                  <Conversation
-                    key={conversation._id}
-                    conversation={conversation}
-                    isOnline={onlineUsers.includes(
-                      conversation.participants[0]._id
-                    )}
-                  />
-                );
-              })}
+              {conversations.length === 0 ? (
+                <Text>No Conversation has Started</Text>
+              ) : (
+                conversations.map((conversation) => {
+                  return (
+                    <Conversation
+                      key={conversation._id}
+                      conversation={conversation}
+                      isOnline={onlineUsers.includes(
+                        conversation.participants[0]._id
+                      )}
+                    />
+                  );
+                })
+              )}
             </>
           )}
         </Flex>

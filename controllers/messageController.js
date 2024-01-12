@@ -76,10 +76,12 @@ export const getConversations = async (req, res) => {
   const { userId } = req.user;
   const conversations = await Conversation.find({
     participants: userId,
-  }).populate({
-    path: 'participants',
-    select: 'username avatar',
-  });
+  })
+    .populate({
+      path: 'participants',
+      select: 'username avatar',
+    })
+    .sort('-createdAt');
 
   // remove current user from the participants array
   conversations.forEach((conversation) => {
