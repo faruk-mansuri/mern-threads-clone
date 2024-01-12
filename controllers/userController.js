@@ -22,7 +22,12 @@ export const getUserProfile = async (req, res) => {
   const { query } = req.params;
 
   let user;
-  if (mongoose.Types.ObjectId.isValid(query)) {
+
+  const isUserId = (query) =>
+    mongoose.Types.ObjectId.isValid(query) &&
+    new mongoose.Types.ObjectId(query).toString() === query; //true or false
+
+  if (isUserId(query)) {
     user = await User.findOne({ _id: query })
       .select('-password')
       .select('-updatedAt');
@@ -31,6 +36,7 @@ export const getUserProfile = async (req, res) => {
       .select('-password')
       .select('-updatedAt');
   }
+
   if (!user) throw new BadRequestError('User not found');
   res.status(StatusCodes.OK).json({ user });
 };
