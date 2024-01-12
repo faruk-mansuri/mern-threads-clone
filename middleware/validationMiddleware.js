@@ -30,7 +30,9 @@ export const validateRegisterInput = withValidationErrors([
     .notEmpty()
     .withMessage('name is required')
     .isLength({ min: 3, max: 50 })
-    .withMessage('your name should have min and max length between 3-50'),
+    .withMessage('your name should have min and max length between 3-50')
+    .matches(/^(?=.{8,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/)
+    .withMessage('Username invalid'),
   body('username')
     .notEmpty()
     .withMessage('username is required')
