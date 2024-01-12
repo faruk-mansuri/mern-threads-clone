@@ -73,7 +73,10 @@ const Conversation = ({ conversation, isOnline }) => {
           ) : (
             ''
           )}
-          {lastMessage.text.length > 15
+
+          {conversation.newConversation
+            ? ''
+            : lastMessage.text.length > 15
             ? lastMessage.text.substring(0, 15) + '...'
             : lastMessage.text || <BsFillImageFill size={16} />}
         </Box>

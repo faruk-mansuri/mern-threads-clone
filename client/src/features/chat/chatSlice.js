@@ -18,7 +18,7 @@ const chatSlice = createSlice({
       state.conversations = payload;
     },
     addConversations: (state, { payload }) => {
-      state.conversations.push(payload);
+      state.conversations.unshift(payload);
     },
     updateLastMessageConversations: (state, { payload }) => {
       let conversation = state.conversations.find(

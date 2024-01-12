@@ -73,6 +73,7 @@ const Chat = () => {
 
       const mockConversation = {
         mock: true,
+        newConversation: true,
         lastMessage: {
           text: '',
           sender: '',
@@ -158,6 +159,7 @@ const Chat = () => {
               </Button>
             </Flex>
           </form>
+
           {isLoadingConversations ? (
             [0, 1, 2, 3, 4].map((_, i) => {
               return (
