@@ -76,7 +76,7 @@ export const replyToPost = async (req, res) => {
     text,
   };
 
-  post.replies.unShift(reply);
+  post.replies.unshift(reply);
   await post.save();
 
   res.status(StatusCodes.OK).json({ msg: 'post added successfully', reply });
