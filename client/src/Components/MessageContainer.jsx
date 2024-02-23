@@ -52,11 +52,6 @@ const MessageContainer = () => {
   }, [socket, selectedConversation]);
 
   const getMessages = async () => {
-    if (selectedConversation.mock) {
-      setMessages([]);
-      return;
-    }
-
     setMessagesLoading(true);
     try {
       const response = await customFetch.get(

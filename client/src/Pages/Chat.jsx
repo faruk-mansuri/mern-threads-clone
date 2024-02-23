@@ -38,6 +38,9 @@ const Chat = () => {
     socket.on('messagesSeen', ({ conversationId }) => {
       dispatch(updateLastMessageSeenConversations(conversationId));
     });
+    socket.on('newConversation', (conversation) => {
+      dispatch(addConversations(conversation));
+    });
   }, [socket]);
 
   const handleConversationSearch = async (e) => {
@@ -71,25 +74,23 @@ const Chat = () => {
         return;
       }
 
-      const mockConversation = {
-        mock: true,
-        newConversation: true,
-        lastMessage: {
-          text: '',
-          sender: '',
-        },
-        _id: Date.now(),
-        participants: [
-          {
-            _id: searchedUser._id,
-            username: searchedUser.username,
-            userProfilePic: searchedUser.userProfilePic,
-          },
-        ],
-      };
+      const { data } = await customFetch.post('/conversations', {
+        userId: searchedUser._id,
+      });
+
+      dispatch(
+        setSelectedConversation({
+          _id: data.conversation._id,
+          userId: searchedUser._id,
+          username: searchedUser.username,
+          userProfilePic: searchedUser.avatar,
+        })
+      );
+      dispatch(addConversations(data.conversation));
+
       setSearchText('');
-      dispatch(addConversations(mockConversation));
     } catch (error) {
+      console.log(error);
       const errorMessage = error?.response?.data?.msg || 'Something went wrong';
       toast.error(errorMessage);
     } finally {
@@ -100,7 +101,7 @@ const Chat = () => {
   const getConversations = async () => {
     setIsLoadingConversations(true);
     try {
-      const response = await customFetch.get('/messages/conversations');
+      const response = await customFetch.get('/conversations');
       dispatch(setConversations(response.data.conversations));
     } catch (error) {
       const errorMessage = error?.response?.data?.msg || 'Something went wrong';

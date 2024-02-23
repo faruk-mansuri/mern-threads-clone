@@ -45,14 +45,6 @@ const MessageInput = ({ setMessages }) => {
         img: imgUrl,
       });
 
-      if (selectedConversation.mock) {
-        toast.success(`connecting to ${selectedConversation.username}`);
-        setTimeout(() => {
-          window.location.reload();
-        }, 2000);
-        return;
-      }
-
       setMessages((message) => [...message, response.data.newMessage]);
       dispatch(
         updateLastMessageConversations({

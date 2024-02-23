@@ -10,19 +10,34 @@ import {
   useColorModeValue,
   Box,
 } from '@chakra-ui/react';
-import React from 'react';
+import { useEffect, useState } from 'react';
 import { BsCheck2All, BsFillImageFill } from 'react-icons/bs';
 import { useDispatch, useSelector } from 'react-redux';
 import { setSelectedConversation } from '../features/chat/chatSlice';
 import verifiedLogo from '../assets/images/verified.png';
+import { useGlobalSocketContext } from '../../Context/SocketContext';
 
 const Conversation = ({ conversation, isOnline }) => {
-  const user = conversation.participants[0];
-  const lastMessage = conversation.lastMessage;
+  const { socket } = useGlobalSocketContext();
   const currentUser = useSelector((store) => store.user.user);
+  const user = conversation.participants.filter(
+    (user) => user._id !== currentUser._id
+  )[0];
+
+  const [lastMessage, setLastMessage] = useState(conversation.lastMessage);
   const { selectedConversation } = useSelector((store) => store.chat);
   const dispatch = useDispatch();
   const color = useColorMode();
+
+  useEffect(() => {
+    socket.on('newMessage', (newMessage) => {
+      setLastMessage(newMessage);
+    });
+  }, [socket]);
+
+  useEffect(() => {
+    setLastMessage(conversation.lastMessage);
+  }, [conversation]);
 
   return (
     <Flex
@@ -42,7 +57,6 @@ const Conversation = ({ conversation, isOnline }) => {
             userId: user._id,
             username: user.username,
             userProfilePic: user.avatar,
-            mock: conversation.mock,
           })
         )
       }
@@ -65,20 +79,23 @@ const Conversation = ({ conversation, isOnline }) => {
           {user?.username.substring(0, 10)}
           <Image src={verifiedLogo} w={4} h={4} ml={1} />
         </Text>
+
         <Box fontSize='sm' display={'flex'} alignItems='center' gap={1}>
-          {currentUser?._id === lastMessage.sender ? (
-            <Box color={lastMessage.seen ? 'blue.400' : ''}>
+          {currentUser?._id === lastMessage?.sender ? (
+            <Box color={lastMessage?.seen ? 'blue.400' : ''}>
               <BsCheck2All size={16} />
             </Box>
           ) : (
             ''
           )}
 
-          {conversation.newConversation
-            ? ''
-            : lastMessage.text.length > 15
-            ? lastMessage.text.substring(0, 15) + '...'
-            : lastMessage.text || <BsFillImageFill size={16} />}
+          {!lastMessage?.text && <p>Start conversation</p>}
+
+          {lastMessage?.text?.length > 15
+            ? lastMessage?.text.substring(0, 15) + '...'
+            : lastMessage?.text}
+
+          {lastMessage?.img && <BsFillImageFill size={16} />}
         </Box>
       </Stack>
     </Flex>

@@ -18,6 +18,7 @@ import AuthRouter from './routes/AuthRoute.js';
 import UserRouter from './routes/UserRoute.js';
 import PostRouter from './routes/PostRoute.js';
 import MessageRoute from './routes/MessageRoute.js';
+import ConversationRoute from './routes/ConversationRoute.js';
 
 // public
 import { dirname } from 'path';
@@ -59,6 +60,7 @@ app.use('/api/v1/auth', AuthRouter);
 app.use('/api/v1/users', authenticateUser, UserRouter);
 app.use('/api/v1/posts', authenticateUser, PostRouter);
 app.use('/api/v1/messages', authenticateUser, MessageRoute);
+app.use('/api/v1/conversations', authenticateUser, ConversationRoute);
 
 app.get('*', (req, res) => {
   res.sendFile(path.resolve(__dirname, './client/dist', 'index.html'));

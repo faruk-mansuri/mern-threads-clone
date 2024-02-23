@@ -15,13 +15,9 @@ export const sendMessage = async (req, res) => {
   });
 
   if (!conversation) {
-    conversation = await Conversation.create({
-      participants: [senderId, recipientId],
-      lastMessage: {
-        text: message,
-        sender: senderId,
-      },
-    });
+    res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: 'Conversation not found.' });
   }
 
   if (img) {
@@ -70,6 +66,10 @@ export const getMessages = async (req, res) => {
   }).sort('createdAt');
 
   res.status(StatusCodes.OK).json({ messages });
+};
+
+export const createConversation = (req, res) => {
+  return res.status(StatusCodes.OK).json({ msg: OK });
 };
 
 export const getConversations = async (req, res) => {

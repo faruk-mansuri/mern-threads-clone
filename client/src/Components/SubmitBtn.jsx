@@ -1,7 +1,7 @@
 import { Button, Spinner, useColorMode } from '@chakra-ui/react';
 import { useNavigation } from 'react-router-dom';
 
-const SubmitBtn = ({ formBtn }) => {
+const SubmitBtn = () => {
   const navigation = useNavigation();
   const isSubmitting = navigation.state === 'submitting';
 
