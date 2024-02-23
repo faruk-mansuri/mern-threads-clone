@@ -89,7 +89,9 @@ const Conversation = ({ conversation, isOnline }) => {
             ''
           )}
 
-          {!lastMessage?.text && <p>Start conversation</p>}
+          {!lastMessage?.text && !lastMessage?.img && <p>Start conversation</p>}
+
+          {/* {!lastMessage?.text && <p>Start conversation</p>} */}
 
           {lastMessage?.text?.length > 15
             ? lastMessage?.text.substring(0, 15) + '...'

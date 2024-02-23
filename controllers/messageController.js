@@ -68,27 +68,116 @@ export const getMessages = async (req, res) => {
   res.status(StatusCodes.OK).json({ messages });
 };
 
-export const createConversation = (req, res) => {
-  return res.status(StatusCodes.OK).json({ msg: OK });
+export const updateMessage = async (req, res) => {
+  const { userId } = req.user;
+  const { conversationId } = req.params;
+  const { messageId, recipientId, text } = req.body;
+
+  if (!text)
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: 'Content is required.' });
+
+  if (!conversationId)
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: 'Conversation ID missing.' });
+
+  if (!messageId)
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: 'Message ID missing.' });
+
+  const conversation = await Conversation.find({
+    _id: conversationId,
+  });
+  if (!conversation)
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: 'Conversation not found.' });
+
+  let message = await Message.findById({ _id: messageId });
+  if (!message || message.deleted) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: 'Message not found.' });
+  }
+
+  const member = conversation[0].participants.find((id) => '' + id === userId);
+  if (!member)
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: 'Member not found' });
+
+  if (userId !== '' + message?.sender)
+    return res
+      .status(StatusCodes.UNAUTHORIZED)
+      .json({ msg: 'Unauthorized to update this message' });
+
+  message.text = text;
+  await message.save();
+
+  const recipientSocketId = getRecipientSocketId(recipientId);
+
+  if (recipientSocketId) {
+    io.to(recipientSocketId).emit('updatedMessage', message);
+  }
+
+  res.status(StatusCodes.OK).json({ message });
 };
 
-export const getConversations = async (req, res) => {
+export const deleteMessage = async (req, res) => {
   const { userId } = req.user;
-  const conversations = await Conversation.find({
-    participants: userId,
-  })
-    .populate({
-      path: 'participants',
-      select: 'username avatar',
-    })
-    .sort('-createdAt');
+  const { conversationId } = req.params;
+  const { messageId, recipientId } = req.body;
 
-  // remove current user from the participants array
-  conversations.forEach((conversation) => {
-    conversation.participants = conversation.participants.filter(
-      (participant) => participant._id.toString() !== req.user.userId.toString()
-    );
+  if (!conversationId)
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: 'Conversation ID missing.' });
+
+  if (!messageId)
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: 'Message ID missing.' });
+
+  const conversation = await Conversation.find({
+    _id: conversationId,
   });
+  if (!conversation)
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: 'Conversation not found.' });
 
-  res.status(StatusCodes.OK).json({ conversations });
+  let message = await Message.findById({ _id: messageId });
+  if (!message || message.deleted) {
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: 'Message not found.' });
+  }
+
+  const member = conversation[0].participants.find((id) => '' + id === userId);
+  if (!member)
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ msg: 'Member not found' });
+
+  if (userId !== '' + message?.sender)
+    return res
+      .status(StatusCodes.UNAUTHORIZED)
+      .json({ msg: 'Unauthorized to delete this message' });
+
+  message.text = 'This message has been deleted';
+  message.img = '';
+  message.deleted = true;
+
+  await message.save();
+
+  const recipientSocketId = getRecipientSocketId(recipientId);
+
+  if (recipientSocketId) {
+    io.to(recipientSocketId).emit('updatedMessage', message);
+  }
+
+  res.status(StatusCodes.OK).json({ message });
 };

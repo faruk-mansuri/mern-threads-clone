@@ -9,6 +9,9 @@ import { DeleteIcon } from '@chakra-ui/icons';
 import { useSelector, useDispatch } from 'react-redux';
 import { deletePost } from '../features/post/postSlice';
 import verifiedLogo from '../assets/images/verified.png';
+import { format } from 'date-fns';
+
+const DATE_FORMAT = 'd MMM yyyy';
 
 const Post = ({ post }) => {
   const { user: currentUser } = useSelector((store) => store.user);
@@ -127,11 +130,7 @@ const Post = ({ post }) => {
                 textAlign={'right'}
                 color={'gray.light'}
               >
-                {formatDistanceToNow(new Date(post.createdAt))
-                  .split(' ')
-                  .slice(1)
-                  .join(' ')}{' '}
-                ago
+                {format(new Date(post.createdAt), DATE_FORMAT)}
               </Text>
               {currentUser?._id === user._id && (
                 <DeleteIcon

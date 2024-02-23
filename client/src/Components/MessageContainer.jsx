@@ -29,6 +29,25 @@ const MessageContainer = () => {
   const dispatch = useDispatch();
   const messageEndRef = useRef(null);
 
+  const getMessages = async () => {
+    setMessagesLoading(true);
+    try {
+      const response = await customFetch.get(
+        `/messages/${selectedConversation.userId}`
+      );
+      setMessages(response.data.messages);
+    } catch (error) {
+      const errorMessage = error?.response?.data?.msg || 'Something went wrong';
+      toast.error(errorMessage);
+      return errorMessage;
+    } finally {
+      setMessagesLoading(false);
+    }
+  };
+  useEffect(() => {
+    getMessages();
+  }, [selectedConversation.userId]);
+
   useEffect(() => {
     socket.on('newMessage', (message) => {
       if (selectedConversation._id === message.conversationId) {
@@ -48,24 +67,33 @@ const MessageContainer = () => {
       );
     });
 
-    return () => socket.off('newMessage');
-  }, [socket, selectedConversation]);
+    socket.on('updatedMessage', (updatedMessage) => {
+      setMessages((preMessages) => {
+        const newMessages = preMessages?.map((message, i) => {
+          if (message?._id === updatedMessage?._id) {
+            if (i === preMessages.length - 1) {
+              dispatch(
+                updateLastMessageConversations({
+                  messageText: updatedMessage.text,
+                  sender: updatedMessage.sender,
+                  conversationId: updatedMessage.conversationId,
+                })
+              );
+            }
+            return updatedMessage;
+          }
+          return message;
+        });
 
-  const getMessages = async () => {
-    setMessagesLoading(true);
-    try {
-      const response = await customFetch.get(
-        `/messages/${selectedConversation.userId}`
-      );
-      setMessages(response.data.messages);
-    } catch (error) {
-      const errorMessage = error?.response?.data?.msg || 'Something went wrong';
-      toast.error(errorMessage);
-      return errorMessage;
-    } finally {
-      setMessagesLoading(false);
-    }
-  };
+        return newMessages;
+      });
+    });
+
+    return () => {
+      socket.off('newMessage');
+      socket.off('updateMessage');
+    };
+  }, [socket, selectedConversation]);
 
   useEffect(() => {
     const lastMessageIsFromOtherUser =
@@ -93,10 +121,6 @@ const MessageContainer = () => {
   }, [socket, currentUser?._id, messages]);
 
   useEffect(() => {
-    getMessages();
-  }, [selectedConversation.userId]);
-
-  useEffect(() => {
     messageEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
@@ -111,7 +135,7 @@ const MessageContainer = () => {
       {/* MESSAGE HEADER */}
       <Link to={`/${selectedConversation.username}`}>
         <Flex w='full' h={12} alignItems={'center'} gap={2}>
-          <Avatar src={selectedConversation.userProfilePic} size='sm' />
+          <Avatar src={selectedConversation.userProfilePic} size='md' />
           <Text display={'flex'} alignItems={'center'}>
             {selectedConversation.username}
             <Image src={verifiedLogo} w={4} h={4} ml={1} />
@@ -119,7 +143,7 @@ const MessageContainer = () => {
         </Flex>
       </Link>
 
-      <Divider />
+      <Divider paddingTop={2} />
 
       {/* MESSAGES */}
       <Flex
@@ -174,7 +198,9 @@ const MessageContainer = () => {
                 >
                   <Message
                     message={message}
-                    ownMessage={currentUser._id === message.sender}
+                    ownMessage={currentUser?._id === message.sender}
+                    recipientId={selectedConversation?.userId}
+                    isLastMessage={i === messages?.length - 1}
                   />
                 </Flex>
               );

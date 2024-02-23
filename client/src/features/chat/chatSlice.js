@@ -21,6 +21,7 @@ const chatSlice = createSlice({
       state.conversations.unshift(payload);
     },
     updateLastMessageConversations: (state, { payload }) => {
+      console.log({ payload });
       let conversation = state.conversations.find(
         (c) => c._id === payload.conversationId
       );
