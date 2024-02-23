@@ -21,7 +21,7 @@ const Conversation = ({ conversation, isOnline }) => {
   const { socket } = useGlobalSocketContext();
   const currentUser = useSelector((store) => store.user.user);
   const user = conversation.participants.filter(
-    (user) => user._id !== currentUser._id
+    (user) => user?._id !== currentUser?._id
   )[0];
 
   const [lastMessage, setLastMessage] = useState(conversation.lastMessage);
