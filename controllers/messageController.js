@@ -115,6 +115,7 @@ export const updateMessage = async (req, res) => {
       .json({ msg: 'Unauthorized to update this message' });
 
   message.text = text;
+  message.isEdited = true;
   await message.save();
 
   conversation[0].lastMessage.text = text;

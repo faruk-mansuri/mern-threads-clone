@@ -16,6 +16,10 @@ const MessageSchema = new mongoose.Schema(
       type: String,
       default: '',
     },
+    isEdited: {
+      type: Boolean,
+      default: false,
+    },
     deleted: {
       type: Boolean,
       default: false,

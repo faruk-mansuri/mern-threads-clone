@@ -34,7 +34,7 @@ const Message = ({
   const currentUser = useSelector((store) => store.user.user);
   const [imgLoaded, setImgLoaded] = useState(false);
 
-  const isUpdated = message.createdAt !== message.updatedAt;
+  const isUpdated = message.isEdited;
 
   const dispatch = useDispatch();
 
@@ -54,8 +54,8 @@ const Message = ({
       );
       setIsEditTextId('');
       message.text = data.message.text;
-      message.createdAt = data.message.createdAt;
-      message.updatedAt = data.message.updatedAt;
+      message.isEdited = data.message.isEdited;
+
       if (isLastMessage) {
         dispatch(
           updateLastMessageConversations({
