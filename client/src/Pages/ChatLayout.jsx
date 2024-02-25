@@ -200,6 +200,7 @@ const ChatLayout = () => {
                         isOnline={onlineUsers.includes(
                           conversation.participants[0]._id
                         )}
+                        updatedAt={conversation.updatedAt}
                       />
                     );
                   })
@@ -282,6 +283,7 @@ const ChatLayout = () => {
                         isOnline={onlineUsers.includes(
                           conversation.participants[0]._id
                         )}
+                        updatedAt={conversation.updatedAt}
                       />
                     );
                   })

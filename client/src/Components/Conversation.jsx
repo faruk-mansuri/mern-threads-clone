@@ -15,16 +15,20 @@ import {
 import { useEffect, useState } from 'react';
 import { BsCheck2All, BsFillImageFill } from 'react-icons/bs';
 import { useDispatch, useSelector } from 'react-redux';
-import { setSelectedConversation } from '../features/chat/chatSlice';
+import {
+  setSelectedConversation,
+  updateLastMessageConversations,
+} from '../features/chat/chatSlice';
 import verifiedLogo from '../assets/images/verified.png';
 import { useGlobalSocketContext } from '../../Context/SocketContext';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
 const DATE_FORMAT = 'd MMM yyyy, HH:mm';
 
-const Conversation = ({ conversation, isOnline }) => {
+const Conversation = ({ conversation, isOnline, updatedAt }) => {
   const { socket } = useGlobalSocketContext();
   const currentUser = useSelector((store) => store.user.user);
+  const { conversations } = useSelector((store) => store.chat);
 
   const user = conversation.participants.filter(
     (user) => user?._id !== currentUser?._id
@@ -35,6 +39,13 @@ const Conversation = ({ conversation, isOnline }) => {
   const dispatch = useDispatch();
   const color = useColorMode();
 
+  const [time, setTime] = useState(lastMessage?.createdAt || updatedAt);
+  useEffect(() => {
+    if (lastMessage.createdAt) {
+      setTime(lastMessage.createdAt);
+    }
+  }, [lastMessage.createdAt]);
+
   useEffect(() => {
     socket.on('newMessage', (newMessage) => {
       if (newMessage.conversationId === conversation._id) {
@@ -42,9 +53,21 @@ const Conversation = ({ conversation, isOnline }) => {
       }
     });
 
-    socket.on('', (newMessage) => {
-      if (newMessage.conversationId === conversation._id) {
-        setLastMessage(newMessage);
+    socket.on('updatedMessage', (updatedMessage) => {
+      if (updatedMessage.conversationId === conversation._id) {
+        // const conversation = conversations.find(
+        //   (c) => c._id === updatedMessage.conversationId
+        // );
+        dispatch(
+          updateLastMessageConversations({
+            messageText: updatedMessage.text,
+            sender: updatedMessage.sender,
+            conversationId: updatedMessage.conversationId,
+            img: updatedMessage.img,
+            createdAt: updatedMessage.createdAt,
+            updatedAt: updatedMessage.updatedAt,
+          })
+        );
       }
     });
   }, [socket, selectedConversation]);
@@ -99,10 +122,7 @@ const Conversation = ({ conversation, isOnline }) => {
                 <Image src={verifiedLogo} w={4} h={4} ml={1} />
               </Flex>
 
-              <Hide above='lg'>
-                {lastMessage.createdAt &&
-                  format(new Date(lastMessage?.createdAt), DATE_FORMAT)}
-              </Hide>
+              <Hide above='lg'>{format(new Date(time), DATE_FORMAT)}</Hide>
             </Flex>
           </Text>
 
