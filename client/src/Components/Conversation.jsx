@@ -21,6 +21,7 @@ import { Link } from 'react-router-dom';
 const Conversation = ({ conversation, isOnline }) => {
   const { socket } = useGlobalSocketContext();
   const currentUser = useSelector((store) => store.user.user);
+
   const user = conversation.participants.filter(
     (user) => user?._id !== currentUser?._id
   )[0];
@@ -36,7 +37,7 @@ const Conversation = ({ conversation, isOnline }) => {
         setLastMessage(newMessage);
       }
     });
-  }, [socket]);
+  }, [socket, selectedConversation]);
 
   useEffect(() => {
     setLastMessage(conversation.lastMessage);
