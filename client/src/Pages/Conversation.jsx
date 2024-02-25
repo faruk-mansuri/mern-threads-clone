@@ -9,6 +9,7 @@ import {
   Skeleton,
   Box,
   Hide,
+  Button,
 } from '@chakra-ui/react';
 import { useEffect, useRef, useState } from 'react';
 import Message from '../Components/Message';
@@ -18,7 +19,10 @@ import customFetch from '../utils/customFetch';
 import { useDispatch, useSelector } from 'react-redux';
 import verifiedLogo from '../assets/images/verified.png';
 import { useGlobalSocketContext } from '../../Context/SocketContext';
-import { updateLastMessageConversations } from '../features/chat/chatSlice';
+import {
+  removeSelectedConversation,
+  updateLastMessageConversations,
+} from '../features/chat/chatSlice';
 import { Link, useNavigate } from 'react-router-dom';
 import messageSound from '../assets/sounds/message.mp3';
 import { IoIosArrowBack } from 'react-icons/io';
@@ -150,9 +154,15 @@ const ConversationPage = () => {
       {/* MESSAGE HEADER */}
       <Flex flex={1} w='full' h={12} alignItems={'center'} gap={2}>
         <Hide above='lg'>
-          <Link to='/chat'>
+          <Button
+            variant='ghost'
+            onClick={() => {
+              dispatch(removeSelectedConversation());
+              navigate('/chat');
+            }}
+          >
             <IoIosArrowBack size={30} _hover={{ bgColor: 'blue' }} />
-          </Link>
+          </Button>
         </Hide>
         <Avatar src={selectedConversation.userProfilePic} size='md' />
         <Text display={'flex'} alignItems={'center'}>

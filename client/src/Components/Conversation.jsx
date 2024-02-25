@@ -32,7 +32,9 @@ const Conversation = ({ conversation, isOnline }) => {
 
   useEffect(() => {
     socket.on('newMessage', (newMessage) => {
-      setLastMessage(newMessage);
+      if (newMessage.conversationId === conversation._id) {
+        setLastMessage(newMessage);
+      }
     });
   }, [socket]);
 

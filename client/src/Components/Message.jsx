@@ -7,6 +7,7 @@ import {
   Skeleton,
   Button,
   Input,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateLastMessageConversations } from '../features/chat/chatSlice';
@@ -173,7 +174,9 @@ const Message = ({
 
                 {!message.deleted && (
                   <Box
-                    bgColor={'gray.900'}
+                    borderRadius={4}
+                    bgColor={useColorModeValue('gray.300', 'gray.700')}
+                    color={useColorModeValue('gray.900', 'gray.200')}
                     position='absolute'
                     top={-2}
                     right={0}

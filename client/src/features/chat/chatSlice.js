@@ -38,6 +38,14 @@ const chatSlice = createSlice({
     setSelectedConversation: (state, { payload }) => {
       state.selectedConversation = payload;
     },
+    removeSelectedConversation: (state) => {
+      state.selectedConversation = {
+        _id: null,
+        userId: null,
+        username: null,
+        userProfilePic: null,
+      };
+    },
 
     updateLastMessageSeenConversations: (state, { payload }) => {
       state.conversations = state.conversations.map((conversation) => {
@@ -72,6 +80,7 @@ export const {
   addConversations,
   updateLastMessageConversations,
   setSelectedConversation,
+  removeSelectedConversation,
   updateLastMessageSeenConversations,
   updateEditLastMessageConversations,
 } = chatSlice.actions;

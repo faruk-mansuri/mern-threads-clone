@@ -46,10 +46,7 @@ const ChatLayout = () => {
       dispatch(addConversations(conversation));
     });
 
-    socket.on('updatedMessage', (updatedMessage) => {
-      dispatch(updateEditLastMessageConversations(updatedMessage));
-    });
-    socket.on('newMessage', (message) => {
+    socket.on('conversationId', (message) => {
       dispatch(
         updateLastMessageConversations({
           messageText: message.text,

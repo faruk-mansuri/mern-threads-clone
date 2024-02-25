@@ -12,6 +12,7 @@ import {
   ModalOverlay,
   Spinner,
   useDisclosure,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import { useRef, useState } from 'react';
 import { IoSendSharp } from 'react-icons/io5';
@@ -70,6 +71,8 @@ const MessageInput = ({ setMessages }) => {
       <form onSubmit={handleSendMessage} style={{ flex: 95 }}>
         <InputGroup>
           <Input
+            border={'2px'}
+            borderColor={useColorModeValue('gray.400', 'gray.600')}
             w='full'
             placeholder='Type a message'
             value={messageText}

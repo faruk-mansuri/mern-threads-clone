@@ -8,5 +8,4 @@ export { default as LogoutBtn } from './LogoutBtn';
 export { default as Post } from './Post';
 export { default as CreatePost } from './CreatePost';
 export { default as Conversation } from './Conversation';
-export { default as MessageContainer } from './MessageContainer';
 export { default as SuggestedUsers } from './SuggestedUsers';
