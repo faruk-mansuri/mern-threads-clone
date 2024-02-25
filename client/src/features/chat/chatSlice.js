@@ -31,6 +31,7 @@ const chatSlice = createSlice({
           text: payload.messageText,
           sender: payload.sender,
           img: payload?.img || '',
+          createdAt: payload.createdAt,
         };
       }
     },
@@ -69,6 +70,7 @@ const chatSlice = createSlice({
           sender: payload.sender,
           seen: payload.seen,
           deleted: payload.deleted,
+          createdAt: payload.createdAt,
         };
       }
     },

@@ -53,6 +53,7 @@ const ChatLayout = () => {
           sender: message.sender,
           conversationId: message.conversationId,
           img: message?.img,
+          createdAt: message.createdAt,
         })
       );
     });

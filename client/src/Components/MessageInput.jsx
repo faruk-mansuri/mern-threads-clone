@@ -53,11 +53,13 @@ const MessageInput = ({ setMessages }) => {
           sender: response.data.newMessage.sender,
           conversationId: response.data.newMessage.conversationId,
           img: response.data.newMessage?.img,
+          createdAt: response.data.newMessage.createdAt,
         })
       );
       setMessageText('');
       setImgUrl('');
     } catch (error) {
+      console.log(error);
       const errorMessage = error?.response?.data?.msg || 'Something went wrong';
       toast.error(errorMessage);
       return errorMessage;

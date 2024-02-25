@@ -18,7 +18,7 @@ import { format } from 'date-fns';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import customFetch from '../utils/customFetch';
-const DATE_FORMAT = 'd MMM yyyy, HH:mm';
+const DATE_FORMAT = 'd MMM yyyy, HH:mm a..aa	';
 
 const Message = ({
   message,
@@ -64,6 +64,7 @@ const Message = ({
             sender: data.message.sender,
             conversationId: data.message.conversationId,
             img: data.message?.img,
+            createdAt: data.message.createdAt,
           })
         );
       }

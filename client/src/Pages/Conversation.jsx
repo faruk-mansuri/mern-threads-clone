@@ -23,7 +23,7 @@ import {
   removeSelectedConversation,
   updateLastMessageConversations,
 } from '../features/chat/chatSlice';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import messageSound from '../assets/sounds/message.mp3';
 import { IoIosArrowBack } from 'react-icons/io';
 
@@ -98,7 +98,8 @@ const ConversationPage = () => {
                   messageText: updatedMessage.text,
                   sender: updatedMessage.sender,
                   conversationId: updatedMessage.conversationId,
-                  img: updatedMessage?.img,
+                  img: updatedMessage.img,
+                  createdAt: updatedMessage.createdAt,
                 })
               );
             }
@@ -109,8 +110,6 @@ const ConversationPage = () => {
         return newMessages;
       });
     });
-
-    return () => socket.off('updateMessage');
   }, [socket, selectedConversation, messages]);
 
   useEffect(() => {

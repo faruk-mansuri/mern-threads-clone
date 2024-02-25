@@ -9,6 +9,8 @@ import {
   useColorMode,
   useColorModeValue,
   Box,
+  Hide,
+  Show,
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { BsCheck2All, BsFillImageFill } from 'react-icons/bs';
@@ -17,6 +19,8 @@ import { setSelectedConversation } from '../features/chat/chatSlice';
 import verifiedLogo from '../assets/images/verified.png';
 import { useGlobalSocketContext } from '../../Context/SocketContext';
 import { Link } from 'react-router-dom';
+import { format } from 'date-fns';
+const DATE_FORMAT = 'd MMM yyyy, HH:mm';
 
 const Conversation = ({ conversation, isOnline }) => {
   const { socket } = useGlobalSocketContext();
@@ -33,6 +37,12 @@ const Conversation = ({ conversation, isOnline }) => {
 
   useEffect(() => {
     socket.on('newMessage', (newMessage) => {
+      if (newMessage.conversationId === conversation._id) {
+        setLastMessage(newMessage);
+      }
+    });
+
+    socket.on('', (newMessage) => {
       if (newMessage.conversationId === conversation._id) {
         setLastMessage(newMessage);
       }
@@ -81,10 +91,19 @@ const Conversation = ({ conversation, isOnline }) => {
           </Avatar>
         </WrapItem>
 
-        <Stack direction={'column'} fontSize='sm'>
+        <Stack direction={'column'} fontSize='sm' w={'full'}>
           <Text fontWeight='700' display='flex' alignItems='center'>
-            {user?.username.substring(0, 10)}
-            <Image src={verifiedLogo} w={4} h={4} ml={1} />
+            <Flex justifyContent={'space-between'} w={'full'}>
+              <Flex alignItems={'center'}>
+                {user?.username.substring(0, 10)}
+                <Image src={verifiedLogo} w={4} h={4} ml={1} />
+              </Flex>
+
+              <Hide above='lg'>
+                {lastMessage.createdAt &&
+                  format(new Date(lastMessage?.createdAt), DATE_FORMAT)}
+              </Hide>
+            </Flex>
           </Text>
 
           <Box fontSize='sm' display={'flex'} alignItems='center' gap={1}>
@@ -100,9 +119,13 @@ const Conversation = ({ conversation, isOnline }) => {
               <p>Start conversation</p>
             )}
 
-            {lastMessage.text && lastMessage?.text?.length > 15
-              ? lastMessage?.text.substring(0, 15) + '...'
-              : lastMessage?.text}
+            <Hide above='lg'>{lastMessage.text}</Hide>
+
+            <Show above='lg'>
+              {lastMessage.text && lastMessage?.text?.length > 15
+                ? lastMessage?.text.substring(0, 10) + '...'
+                : lastMessage?.text}
+            </Show>
 
             {lastMessage?.img && <BsFillImageFill size={16} />}
           </Box>
