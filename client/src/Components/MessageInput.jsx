@@ -51,6 +51,7 @@ const MessageInput = ({ setMessages }) => {
           messageText,
           sender: response.data.newMessage.sender,
           conversationId: response.data.newMessage.conversationId,
+          img: response.data.newMessage?.img,
         })
       );
       setMessageText('');
@@ -65,7 +66,7 @@ const MessageInput = ({ setMessages }) => {
   };
 
   return (
-    <Flex gap={2} alignItems={'center'}>
+    <Flex flex={1} gap={2} alignItems={'center'}>
       <form onSubmit={handleSendMessage} style={{ flex: 95 }}>
         <InputGroup>
           <Input

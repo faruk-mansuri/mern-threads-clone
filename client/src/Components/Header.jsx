@@ -15,7 +15,13 @@ const Header = () => {
 
   return (
     <>
-      <Flex alignItems='center' justifyContent='space-between' mt={6} mb={12}>
+      <Flex
+        height={'2.5rem'}
+        alignItems='center'
+        justifyContent='space-between'
+        mt={'1.5rem'}
+        mb={'2rem'}
+      >
         {user && (
           <Link to='/'>
             <AiFillHome size={24} />

@@ -12,16 +12,22 @@ import { useDispatch, useSelector } from 'react-redux';
 import { updateLastMessageConversations } from '../features/chat/chatSlice';
 import { BsCheck2All, BsTrash } from 'react-icons/bs';
 import { BiEdit } from 'react-icons/bi';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { format } from 'date-fns';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import customFetch from '../utils/customFetch';
 const DATE_FORMAT = 'd MMM yyyy, HH:mm';
 
-const Message = ({ message, ownMessage, recipientId, isLastMessage }) => {
+const Message = ({
+  message,
+  ownMessage,
+  recipientId,
+  isLastMessage,
+  isEditTextId,
+  setIsEditTextId,
+}) => {
   const [value, setValue] = useState(message.text);
-  const [isEditText, setIsEditText] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const { selectedConversation } = useSelector((store) => store.chat);
@@ -31,16 +37,6 @@ const Message = ({ message, ownMessage, recipientId, isLastMessage }) => {
   const isUpdated = message.createdAt !== message.updatedAt;
 
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    const closeEditText = (e) => {
-      if (e.key === 'Escape') {
-        setIsEditText(false);
-      }
-    };
-    window.addEventListener('keydown', closeEditText);
-    return () => window.addEventListener('keydown', closeEditText);
-  }, []);
 
   const handleUpdateMessage = async (e) => {
     e.preventDefault();
@@ -56,19 +52,17 @@ const Message = ({ message, ownMessage, recipientId, isLastMessage }) => {
         `/messages/${message.conversationId}`,
         { messageId: message._id, recipientId, text: value }
       );
-      setIsEditText(false);
+      setIsEditTextId('');
       message.text = data.message.text;
       message.createdAt = data.message.createdAt;
       message.updatedAt = data.message.updatedAt;
-
-      console.log({ isLastMessage });
-
       if (isLastMessage) {
         dispatch(
           updateLastMessageConversations({
             messageText: data.message.text,
             sender: data.message.sender,
             conversationId: data.message.conversationId,
+            img: data.message?.img,
           })
         );
       }
@@ -92,13 +86,13 @@ const Message = ({ message, ownMessage, recipientId, isLastMessage }) => {
       message.img = data.message.img;
       message.deleted = data.message.deleted;
 
-      console.log({ isLastMessage });
       if (isLastMessage) {
         dispatch(
           updateLastMessageConversations({
             messageText: data.message.text,
             sender: data.message.sender,
             conversationId: data.message.conversationId,
+            img: data.message?.img,
           })
         );
       }
@@ -125,7 +119,7 @@ const Message = ({ message, ownMessage, recipientId, isLastMessage }) => {
               borderRadius={'md'}
             >
               <Box wordBreak={'break-word'} color={'white'}>
-                {isEditText ? (
+                {isEditTextId === message._id ? (
                   <form>
                     <Flex gap={2}>
                       <Input
@@ -154,9 +148,15 @@ const Message = ({ message, ownMessage, recipientId, isLastMessage }) => {
                       fontSize={message.deleted && 'sm'}
                       color={message.deleted && 'gray.400'}
                     >
-                      {message.text}
+                      <Text textAlign='end'>{message.text}</Text>
                       {isUpdated && !message.deleted && (
-                        <Text fontSize={'xs'} color={'gray.400'}>
+                        <Text
+                          position='absolute'
+                          top={-1.5}
+                          textAlign='end'
+                          fontSize={'xs'}
+                          color={'gray.400'}
+                        >
                           (edited text)
                         </Text>
                       )}
@@ -182,7 +182,7 @@ const Message = ({ message, ownMessage, recipientId, isLastMessage }) => {
                   >
                     <Flex>
                       <Button
-                        onClick={() => setIsEditText(true)}
+                        onClick={() => setIsEditTextId(message._id)}
                         size='xs'
                         variant='ghost'
                       >
@@ -265,6 +265,7 @@ const Message = ({ message, ownMessage, recipientId, isLastMessage }) => {
           <Avatar src={selectedConversation.userProfilePic} size={'md'} />
           {message.text && (
             <Box
+              position='relative'
               wordBreak={'break-word'}
               maxWidth='330px'
               bg='gray.400'
@@ -279,7 +280,13 @@ const Message = ({ message, ownMessage, recipientId, isLastMessage }) => {
               >
                 {message.text}
                 {isUpdated && !message.deleted && (
-                  <Text fontSize={'xs'} color={'gray.700'}>
+                  <Text
+                    position='absolute'
+                    top={-1.5}
+                    right={0.5}
+                    fontSize={'xs'}
+                    color={'gray.900'}
+                  >
                     (edited text)
                   </Text>
                 )}

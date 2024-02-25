@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
+  messages: [],
   conversations: [],
   selectedConversation: {
     _id: null,
@@ -21,7 +22,6 @@ const chatSlice = createSlice({
       state.conversations.unshift(payload);
     },
     updateLastMessageConversations: (state, { payload }) => {
-      console.log({ payload });
       let conversation = state.conversations.find(
         (c) => c._id === payload.conversationId
       );
@@ -30,6 +30,7 @@ const chatSlice = createSlice({
         conversation.lastMessage = {
           text: payload.messageText,
           sender: payload.sender,
+          img: payload?.img || '',
         };
       }
     },
@@ -49,6 +50,20 @@ const chatSlice = createSlice({
         return conversation;
       });
     },
+
+    updateEditLastMessageConversations: (state, { payload }) => {
+      let conversation = state.conversations.find(
+        (c) => c._id === payload.conversationId
+      );
+      if (conversation) {
+        conversation.lastMessage = {
+          text: payload.text,
+          sender: payload.sender,
+          seen: payload.seen,
+          deleted: payload.deleted,
+        };
+      }
+    },
   },
 });
 
@@ -58,5 +73,6 @@ export const {
   updateLastMessageConversations,
   setSelectedConversation,
   updateLastMessageSeenConversations,
+  updateEditLastMessageConversations,
 } = chatSlice.actions;
 export default chatSlice.reducer;

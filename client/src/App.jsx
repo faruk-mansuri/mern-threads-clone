@@ -29,6 +29,8 @@ import { action as loginAction } from './Pages/Login';
 import { action as updateProfileAction } from './Pages/UpdateProfile';
 
 import SocketContext from '../Context/SocketContext';
+import ChatLayout from './Pages/ChatLayout';
+import Conversation from './Pages/Conversation';
 
 const router = createBrowserRouter([
   {
@@ -51,7 +53,11 @@ const router = createBrowserRouter([
       },
       {
         path: 'chat',
-        element: <Chat />,
+        element: <ChatLayout />,
+        children: [
+          { index: true, element: <Chat /> },
+          { path: ':conversationId', element: <Conversation /> },
+        ],
       },
       {
         path: 'settings',

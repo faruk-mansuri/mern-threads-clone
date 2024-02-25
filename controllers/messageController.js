@@ -117,6 +117,9 @@ export const updateMessage = async (req, res) => {
   message.text = text;
   await message.save();
 
+  conversation[0].lastMessage.text = text;
+  await conversation[0].save();
+
   const recipientSocketId = getRecipientSocketId(recipientId);
 
   if (recipientSocketId) {

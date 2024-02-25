@@ -1,6 +1,5 @@
 import { Outlet, useNavigation, redirect } from 'react-router-dom';
 import { Header } from '../Components';
-import { toast } from 'react-toastify';
 import customFetch from '../utils/customFetch';
 import { store } from '../store';
 import { setUser } from '../features/user/userSlice';

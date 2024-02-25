@@ -7,20 +7,24 @@ import {
   Divider,
   SkeletonCircle,
   Skeleton,
+  Box,
+  Hide,
 } from '@chakra-ui/react';
 import { useEffect, useRef, useState } from 'react';
-import Message from './Message';
-import MessageInput from './MessageInput';
+import Message from '../Components/Message';
+import MessageInput from '../Components/MessageInput';
 import { toast } from 'react-toastify';
 import customFetch from '../utils/customFetch';
 import { useDispatch, useSelector } from 'react-redux';
 import verifiedLogo from '../assets/images/verified.png';
 import { useGlobalSocketContext } from '../../Context/SocketContext';
 import { updateLastMessageConversations } from '../features/chat/chatSlice';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import messageSound from '../assets/sounds/message.mp3';
+import { IoIosArrowBack } from 'react-icons/io';
 
-const MessageContainer = () => {
+const ConversationPage = () => {
+  const navigate = useNavigate();
   const { socket } = useGlobalSocketContext();
   const { selectedConversation } = useSelector((store) => store.chat);
   const [messagesLoading, setMessagesLoading] = useState(false);
@@ -40,11 +44,30 @@ const MessageContainer = () => {
     return () => window.addEventListener('keydown', closeEditText);
   }, []);
 
+  useEffect(() => {
+    socket.on('newMessage', (message) => {
+      if (selectedConversation?._id === message.conversationId) {
+        setMessages((prevMessages) => [...prevMessages, message]);
+      }
+      if (!document.hasFocus()) {
+        const sound = new Audio(messageSound);
+        sound.play();
+      }
+    });
+
+    return () => socket.off('newMessage');
+  }, [socket, selectedConversation]);
+
+  if (!selectedConversation.userId) {
+    return navigate('/chat');
+  }
+
   const getMessages = async () => {
+    if (!selectedConversation?.userId) return;
     setMessagesLoading(true);
     try {
       const response = await customFetch.get(
-        `/messages/${selectedConversation.userId}`
+        `/messages/${selectedConversation?.userId}`
       );
       setMessages(response.data.messages);
     } catch (error) {
@@ -58,21 +81,7 @@ const MessageContainer = () => {
 
   useEffect(() => {
     getMessages();
-  }, [selectedConversation.userId]);
-
-  useEffect(() => {
-    socket.on('newMessage', (message) => {
-      if (selectedConversation._id === message.conversationId) {
-        setMessages((prevMessages) => [...prevMessages, message]);
-      }
-      if (!document.hasFocus()) {
-        const sound = new Audio(messageSound);
-        sound.play();
-      }
-    });
-
-    return () => socket.off('newMessage');
-  }, [socket, selectedConversation]);
+  }, [selectedConversation?.userId]);
 
   useEffect(() => {
     socket.on('updatedMessage', (updatedMessage) => {
@@ -131,30 +140,34 @@ const MessageContainer = () => {
 
   return (
     <Flex
-      flex={7}
       bg={useColorModeValue('gray.200', 'grey.dark')}
       borderRadius={'md'}
       flexDirection={'column'}
       p={2}
+      h={'calc(100vh - 8rem)'}
+      w={'100%'}
     >
       {/* MESSAGE HEADER */}
-      <Link to={`/${selectedConversation.username}`}>
-        <Flex w='full' h={12} alignItems={'center'} gap={2}>
-          <Avatar src={selectedConversation.userProfilePic} size='md' />
-          <Text display={'flex'} alignItems={'center'}>
-            {selectedConversation.username}
-            <Image src={verifiedLogo} w={4} h={4} ml={1} />
-          </Text>
-        </Flex>
-      </Link>
+      <Flex flex={1} w='full' h={12} alignItems={'center'} gap={2}>
+        <Hide above='lg'>
+          <Link to='/chat'>
+            <IoIosArrowBack size={30} _hover={{ bgColor: 'blue' }} />
+          </Link>
+        </Hide>
+        <Avatar src={selectedConversation.userProfilePic} size='md' />
+        <Text display={'flex'} alignItems={'center'}>
+          {selectedConversation.username}
+          <Image src={verifiedLogo} w={4} h={4} ml={1} />
+        </Text>
+      </Flex>
 
       <Divider paddingTop={2} />
 
       {/* MESSAGES */}
       <Flex
+        flex={8}
         flexDirection={'column'}
         gap={4}
-        my={4}
         h='400px'
         overflowY={'auto'}
         p={2}
@@ -214,9 +227,11 @@ const MessageContainer = () => {
             })}
       </Flex>
 
-      <MessageInput setMessages={setMessages} />
+      <Box flex={1}>
+        <MessageInput setMessages={setMessages} />
+      </Box>
     </Flex>
   );
 };
 
-export default MessageContainer;
+export default ConversationPage;
