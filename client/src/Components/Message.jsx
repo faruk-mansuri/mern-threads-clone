@@ -18,7 +18,7 @@ import { format } from 'date-fns';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import customFetch from '../utils/customFetch';
-const DATE_FORMAT = 'd MMM yyyy, HH:mm a..aa	';
+const DATE_FORMAT = 'd MMM yyyy, HH:mm aa';
 
 const Message = ({
   message,

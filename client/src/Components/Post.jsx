@@ -4,7 +4,6 @@ import { Actions } from '../Components';
 import { useEffect, useState } from 'react';
 import customFetch from '../utils/customFetch';
 import { toast } from 'react-toastify';
-import { formatDistanceToNow } from 'date-fns';
 import { DeleteIcon } from '@chakra-ui/icons';
 import { useSelector, useDispatch } from 'react-redux';
 import { deletePost } from '../features/post/postSlice';

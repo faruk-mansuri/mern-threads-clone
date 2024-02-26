@@ -23,7 +23,7 @@ import verifiedLogo from '../assets/images/verified.png';
 import { useGlobalSocketContext } from '../../Context/SocketContext';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
-const DATE_FORMAT = 'd MMM yyyy, HH:mm';
+const DATE_FORMAT = 'd MMM yyyy, HH:mm aa';
 
 const Conversation = ({ conversation, isOnline, updatedAt }) => {
   const { socket } = useGlobalSocketContext();
