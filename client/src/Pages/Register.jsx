@@ -31,7 +31,7 @@ const Register = () => {
     <Wrapper>
       <Header />
       <Stack mx={'auto'} maxW={'lg'}>
-        <Stack bg={useColorModeValue('white', 'gray.dark')}>
+        <Stack bg={useColorModeValue('white', 'grey.dark')}>
           <Form className='form' method='post'>
             <Stack align={'center'} mb={10}>
               <Heading fontSize={'4xl'} textAlign={'center'} mb={3}>
