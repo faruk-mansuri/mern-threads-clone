@@ -28,7 +28,6 @@ const DATE_FORMAT = 'd MMM yyyy, HH:mm aa';
 const Conversation = ({ conversation, isOnline, updatedAt }) => {
   const { socket } = useGlobalSocketContext();
   const currentUser = useSelector((store) => store.user.user);
-  const { conversations } = useSelector((store) => store.chat);
 
   const user = conversation.participants.filter(
     (user) => user?._id !== currentUser?._id
@@ -39,7 +38,8 @@ const Conversation = ({ conversation, isOnline, updatedAt }) => {
   const dispatch = useDispatch();
   const color = useColorMode();
 
-  const [time, setTime] = useState(lastMessage?.createdAt || updatedAt);
+  const [time, setTime] = useState(updatedAt || lastMessage?.createdAt);
+
   useEffect(() => {
     if (lastMessage.createdAt) {
       setTime(lastMessage.createdAt);
@@ -122,7 +122,11 @@ const Conversation = ({ conversation, isOnline, updatedAt }) => {
                 <Image src={verifiedLogo} w={4} h={4} ml={1} />
               </Flex>
 
-              <Hide above='lg'>{format(new Date(time), DATE_FORMAT)}</Hide>
+              <Hide above='lg'>
+                <Text fontSize={'xs'} fontWeight={'light'}>
+                  {format(new Date(time), DATE_FORMAT)}
+                </Text>
+              </Hide>
             </Flex>
           </Text>
 
